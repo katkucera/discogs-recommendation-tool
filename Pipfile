@@ -9,6 +9,7 @@ verify_ssl = true
 discogs-client = "*"
 beautifulsoup4 = "*"
 requests = "*"
+lxml = "*"
 
 [requires]
 python_version = "3.6"

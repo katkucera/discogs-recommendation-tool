@@ -21,20 +21,40 @@ def get_related_release_ids(start_releases):
 
         user_lists = get_user_list_parents(release)
         
-        related_releases += [get_sibling_releases(release_id, user_list['id']) for user_list in user_lists]
+        related_releases += [get_sibling_releases(list_id) for list_id in user_lists]
 
     return related_releases
-
-
-def get_user_list_parents(release):
-    user_lists = []
-
-    # page_soup = get_soup(release
     
-    return []
+
+# done!
+def get_user_list_parents(release):
+    user_list_ids = []
+    list_divs = []
+    
+    source = requests.get(release.master.url).text
+    
+    page_soup = soup(source, 'html.parser')
+
+    lists_container = page_soup.find('div',{'id':'lists'})
+    list_divs = lists_container.findAll('div')
+
+    for list in list_divs:
+        list_id = list.a['href'].split('/')[-1]
+        user_list_ids.append(list_id)
+
+    return user_list_ids
 
 
-def get_sibling_releases(release_id, user_list_id):
+# working...need to work with Json
+def get_sibling_releases(user_list_id):
+    sibling_releases = []
+    print(user_list_id)
+    
+    user_list_url = 'https://api.discogs.com/lists/{}'.format(user_list_id)
+
+   # This does not work because requests.get returns a .json file...
+   # sibling_releases += requests.get(user_list_url)
+    
     return []
 
 
