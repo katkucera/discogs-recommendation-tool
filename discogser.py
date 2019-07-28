@@ -1,6 +1,7 @@
 import discogs_client
 from bs4 import BeautifulSoup as soup
 import requests
+import json
 
 
 d = discogs_client.Client('discgos_search_tool')
@@ -8,9 +9,8 @@ d = discogs_client.Client('discgos_search_tool')
 
 def parse_url_to_release(url):
     id = int(url.split('/')[-1])
-    release = d.release(id)
-    return release if is_master_release else release.master
 
+    return d.master(id) if is_master_release(url) else d.release(id).master
 
 def get_related_release_ids(start_releases):
     related_releases = []
@@ -31,7 +31,7 @@ def get_user_list_parents(release):
     user_list_ids = []
     list_divs = []
     
-    source = requests.get(release.master.url).text
+    source = requests.get(release.url).text
     
     page_soup = soup(source, 'html.parser')
 
@@ -51,8 +51,13 @@ def get_sibling_releases(user_list_id):
     print(user_list_id)
     
     user_list_url = 'https://api.discogs.com/lists/{}'.format(user_list_id)
-
-   # This does not work because requests.get returns a .json file...
+    try:
+        user_list_data = requests.get(user_list_url).json()
+        print(user_list_data['name'])
+    except ValueError:
+        print('Whelp, you found Chris\' Eternity Tank!¯\_(ツ)_/¯')
+    
+   # print(user_list_data)
    # sibling_releases += requests.get(user_list_url)
     
     return []

@@ -10,6 +10,7 @@ discogs-client = "*"
 beautifulsoup4 = "*"
 requests = "*"
 lxml = "*"
+json = "*"
 
 [requires]
 python_version = "3.6"
