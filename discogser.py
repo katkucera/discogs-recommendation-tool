@@ -55,7 +55,7 @@ def get_sibling_releases(user_list_id):
     try:
         user_list_data = requests.get(user_list_url).json()
         print(user_list_data['name'])
-        file1 = open("user_list_data.txt", "w+")
+        file1 = open(f"{user_list_data['name']}_list_data", "w+")
         for release in user_list_data['items']:
             try:
                 file1.write(str(release['uri'])+"\n")
