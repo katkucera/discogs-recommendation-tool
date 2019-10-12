@@ -47,31 +47,27 @@ def get_user_list_parents(release):
 
 
 # working...need to work with Json
-def get_sibling_releases(user_list_id):
-    sibling_releases = []
-    print(user_list_id)
+def get_sibling_releases(user_list_ids):
+    sibling_releases = {}
+    print(user_list_ids)
 
-    user_list_url = 'https://api.discogs.com/lists/{}'.format(user_list_id)
+    for list in user_list_ids:
+        user_list_url = 'https://api.discogs.com/lists/{}'.format(list)
     try:
         user_list_data = requests.get(user_list_url).json()
-        print(user_list_data['name'])
-        file1 = open(f"{user_list_data['name']}_list_data", "w+")
+        print(f'{str(user_list_data["name"])}')
         for release in user_list_data['items']:
             try:
-                file1.write(str(release['uri'])+"\n")
+                sibling_releases.add(release['uri'])
             except KeyError:
-                try:
-                    file1.write(str(release['display_title'])+'\n')
-                except KeyError:
-                    file1.write('One release skipped\n')
-
+                print("Key error found.")
     except ValueError:
         print('Whelp, you found Chris\' Eternity Tank!¯\_(ツ)_/¯')
 
    # print(user_list_data)
    # sibling_releases += requests.get(user_list_url)
 
-    return []
+    return sibling_releases
 
 
 def is_master_release(url):
