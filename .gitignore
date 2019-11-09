@@ -1,0 +1,5 @@
+tester.py
+*.sw[op]
+*.py[co]
+*.idea
+/venv
