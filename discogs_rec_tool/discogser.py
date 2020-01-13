@@ -1,7 +1,8 @@
-from bs4 import BeautifulSoup as soup
 import requests
 import json
 import discogs_client
+from bs4 import BeautifulSoup as soup
+
 
 # const variable to represent the ID of the list 'Cris's Eternity Tank' which
 # always crashes the program because it can not be called via normal discogs
@@ -9,18 +10,20 @@ import discogs_client
 CHRIS_LIST = '274428'
 CHRIS_MSG = 'Whelp, you found Chris\'s Eternity Tank!¯\\_(ツ)_/¯'
 
-d = discogs_client.Client('disocgs_search_tool')
+d = discogs_client.Client('discogs_user_list_search_tool')
 
 
 def parse_url_to_release(url):
-    id = int(url.split('/')[-1])
+    id_string = url.split('/')[-1]
+    id_ = ''.join([i for i in id_string if i.isdigit()])
+    print(id_)
+    return d.master(id_) if is_master_release(url) else d.release(id_).master
 
-    return d.master(id) if is_master_release(url) else d.release(id).master
 
-
-
-# Web scrape each release url...there might be a better way to do this...
+# Web scrape each release url for the user list urls, there is no way to
+# get user list urls from the API
 def get_user_list_parents(release):
+    print(' == Finding user list IDs ==')
     user_list_ids = []
     list_divs = []
 
@@ -40,22 +43,19 @@ def get_user_list_parents(release):
 # for each release get array of list ids and combine them into related_releases
 # returns array of all related_releases.
 # TODO: pull only duplicates? figure out what to do with this data
-def get_related_release_ids(start_releases):
-    related_releases = []
+def get_related_release_ids(release):
 
-    for release in start_releases:
+    user_lists = get_user_list_parents(release)
 
-        user_lists = get_user_list_parents(release)
+    related_releases = [get_sibling_releases(list_id) for list_id in user_lists]
 
-        related_releases = [get_sibling_releases(list_id)
-        for list_id in user_lists]
+    return related_releases
 
-        return related_releases
 
 # TODO: fix this....
 def get_sibling_releases(user_list_id):
-    user_list_data = {};
-    sibling_releases = [];
+    user_list_data = {}
+    sibling_releases = []
     print(user_list_id)
 
     user_list_url = 'https://api.discogs.com/lists/{}'.format(user_list_id)
@@ -74,7 +74,6 @@ def get_sibling_releases(user_list_id):
         msg = CHRIS_MSG if user_list_id == CHRIS_LIST else '{} not reachable.'.format(user_list_id)
         print(msg)
         return sibling_releases
-
 
 
     #try:
@@ -96,4 +95,4 @@ def get_sibling_releases(user_list_id):
 #M Make sure release id is from the master release to get info on all possible
 # lists.
 def is_master_release(url):
-    return True if 'master' in url else False
+    return bool('master' in url)
