@@ -3,3 +3,4 @@ tester.py
 *.py[co]
 *.idea
 /venv
+personal_access_key.txt
