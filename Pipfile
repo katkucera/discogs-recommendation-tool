@@ -11,6 +11,7 @@ beautifulsoup4 = "*"
 requests = "*"
 lxml = "*"
 oauth2 = "*"
+simplejson = "*"
 
 [requires]
 python_version = "3.6"
