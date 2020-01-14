@@ -27,11 +27,9 @@ def run():
     start_urls = []
 
     start_urls = get_start_urls()
-    print(start_urls)
 
     # returns array of start_releases as master release objects from discogs_client
     start_releases = [parse_url_to_release(url) for url in start_urls if url != '']
-    print(start_releases)
 
     related_release_ids = [get_related_release_ids(release) for release in start_releases]
 
